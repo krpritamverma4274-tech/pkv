@@ -2,272 +2,245 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <title>Exam Hub | 100+ Test Series</title>
+    <title>Exam Hub - 100 Test Series</title>
     <style>
-        :root { --primary: #1a73e8; --success: #28a745; --danger: #d93025; --bg: #f1f3f4; }
+        :root { --primary: #1a73e8; --success: #28a745; --danger: #d93025; --bg: #f8f9fa; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
-        body { background: var(--bg); color: #202124; }
+        body { background: var(--bg); color: #333; }
 
         /* Screens */
         .screen { min-height: 100vh; display: none; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
-        .container { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); width: 100%; max-width: 900px; text-align: center; }
+        .box { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); width: 100%; max-width: 900px; text-align: center; }
         
-        /* Grid System */
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; width: 100%; }
-        .card { background: white; padding: 20px; border: 2px solid #e0e0e0; border-radius: 10px; cursor: pointer; transition: 0.3s; }
-        .card:hover { border-color: var(--primary); transform: translateY(-3px); background: #f8fbff; }
-        
-        /* Test List Scroll */
-        .scroll-list { max-height: 400px; overflow-y: auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; padding: 10px; }
-        .test-item { padding: 15px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; }
-        .test-item:hover { background: var(--primary); color: white; }
+        /* Category Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; margin-top: 20px; }
+        .card { background: #fff; padding: 20px; border: 2px solid #eee; border-radius: 12px; cursor: pointer; transition: 0.3s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
+
+        /* Test List Grid (1 to 100) */
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 12px; margin-top: 20px; max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #eee; border-radius: 10px; }
+        .test-btn { padding: 15px 10px; background: #f1f3f4; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .test-btn:hover { background: var(--primary); color: white; border-color: var(--primary); }
 
         /* Quiz UI */
-        header { background: var(--primary); color: white; padding: 15px 5%; display: none; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .quiz-box { display: none; max-width: 1100px; margin: 20px auto; gap: 20px; padding: 0 15px; }
-        .q-card { flex: 2; background: white; padding: 30px; border-radius: 10px; min-height: 450px; text-align: left; }
-        .option { display: block; padding: 15px; border: 1px solid #ddd; margin: 10px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; }
-        .option.correct { background: #d4edda !important; border-color: #28a745; }
-        .option.wrong { background: #f8d7da !important; border-color: #dc3545; }
+        header { background: var(--primary); color: white; padding: 15px 5%; display: none; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .quiz-container { display: none; max-width: 1100px; margin: 20px auto; gap: 20px; padding: 0 15px; }
+        .q-card { flex: 2; background: white; padding: 30px; border-radius: 12px; min-height: 450px; text-align: left; }
+        .option { display: block; padding: 15px; border: 1px solid #ddd; margin: 10px 0; border-radius: 8px; cursor: pointer; }
+        .option:hover { background: #f0f7ff; }
 
-        /* Palette */
+        /* Question Palette */
         .palette { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
         .dot { width: 35px; height: 35px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; }
         .dot.done { background: var(--success); color: white; border: none; }
         .dot.active { border: 2px solid var(--primary); color: var(--primary); }
 
-        .btn { padding: 12px 25px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
+        .btn { padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; background: var(--primary); color: white; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; }
-        th, td { border: 1px solid #ddd; padding: 12px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
         .my-rank { background: #fff3cd; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="scr-reg" class="screen" style="display: flex;">
-        <div class="container" style="max-width: 400px;">
-            <h2 style="color:var(--primary)">Candidate Login</h2>
-            <input type="text" id="user-name" placeholder="Full Name" style="width:100%; padding:12px; margin:15px 0; border:1px solid #ddd; border-radius:6px;">
-            <button class="btn" style="width:100%" onclick="register()">Login</button>
+        <div class="box" style="max-width: 400px;">
+            <h2 style="color:var(--primary)">Student Portal</h2>
+            <input type="text" id="user-name" placeholder="Apna Naam Likhein" style="width:100%; padding:12px; margin:15px 0; border:1px solid #ddd; border-radius:8px;">
+            <button class="btn" style="width:100%" onclick="register()">Next</button>
         </div>
     </div>
 
     <div id="scr-main" class="screen">
-        <div class="container">
-            <h2>Select Exam Category</h2>
+        <div class="box">
+            <h2>Select Category</h2>
             <div class="grid">
-                <div class="card" onclick="showExams('railway')"><h3>🚂 Railway</h3><p>NTPC, JE, ALP, Group D</p></div>
-                <div class="card" onclick="showExams('ssc')"><h3>🏛️ SSC</h3><p>CGL, CHSL, MTS, GD</p></div>
-                <div class="card" onclick="showExams('police')"><h3>👮 Police</h3><p>State Police & SI</p></div>
+                <div class="card" onclick="openSub('railway')"><h3>🚂 Railway</h3><p>NTPC, ALP, JE, Group D</p></div>
+                <div class="card" onclick="openSub('ssc')"><h3>🏛️ SSC</h3><p>CGL, CHSL, MTS, GD</p></div>
+                <div class="card" onclick="openSub('police')"><h3>👮 Police</h3><p>Constable & SI Exams</p></div>
             </div>
         </div>
     </div>
 
     <div id="scr-sub" class="screen">
-        <div class="container">
-            <h2 id="sub-title">Exams</h2>
+        <div class="box">
+            <h2 id="sub-h">Select Exam</h2>
             <div class="grid" id="exam-list"></div>
             <button class="btn" style="margin-top:20px; background:#666" onclick="backToMain()">Back</button>
         </div>
     </div>
 
-    <div id="scr-tests" class="screen">
-        <div class="container">
-            <h2 id="test-list-title">Select Mock Test</h2>
-            <div class="scroll-list" id="test-numbers"></div>
+    <div id="scr-test-list" class="screen">
+        <div class="box">
+            <h2 id="test-list-h">Mock Test Series</h2>
+            <p style="color: #666; margin-bottom: 10px;">Kisi bhi Test Number par click karein:</p>
+            <div class="test-grid" id="test-buttons-container"></div>
             <button class="btn" style="margin-top:20px; background:#666" onclick="backToExams()">Back</button>
         </div>
     </div>
 
     <header id="quiz-head">
-        <div id="current-test-name" style="font-weight:bold">Exam</div>
+        <div id="display-test-name" style="font-weight:bold">Exam</div>
         <div id="timer" style="font-size:20px; font-weight:bold;">60:00</div>
-        <button class="btn" style="background:var(--success)" onclick="submitTest()">Finish Test</button>
+        <button class="btn" style="background:var(--success)" onclick="finishTest()">Submit</button>
     </header>
 
-    <div class="quiz-box" id="quiz-body">
+    <div class="quiz-container" id="quiz-body">
         <div class="q-card">
-            <h3 id="q-number">Question 1</h3>
-            <p id="q-text" style="margin:20px 0; font-size:20px; line-height:1.5;"></p>
-            <div id="options-box"></div>
-            <div id="review-fact" style="display:none; margin-top:15px; padding:15px; background:#e8f0fe; border-radius:8px;"></div>
-            <div style="margin-top:30px; display:flex; justify-content:space-between;">
-                <button class="btn" style="background:#eee; color:#333" onclick="prevQ()">Previous</button>
-                <button class="btn" id="next-btn" onclick="nextQ()">Save & Next</button>
+            <h3 id="q-idx">Question 1</h3>
+            <p id="q-txt" style="margin:20px 0; font-size:18px; line-height:1.5;"></p>
+            <div id="options"></div>
+            <div style="margin-top:40px; display:flex; justify-content:space-between; border-top:1px solid #eee; padding-top:20px;">
+                <button class="btn" style="background:#eee; color:#333" onclick="prev()">Previous</button>
+                <button class="btn" onclick="next()">Next</button>
             </div>
         </div>
         <div class="sidebar">
+            <p style="margin-bottom:10px; font-weight:bold;">Palette</p>
             <div class="palette" id="palette"></div>
         </div>
     </div>
 
     <div id="scr-res" class="screen">
-        <div class="container">
-            <h2>Result & Ranking</h2>
-            <h1 id="final-score" style="font-size:60px; color:var(--primary); margin:15px 0;">0/0</h1>
-            <h3>🏆 Global Leaderboard</h3>
+        <div class="box">
+            <h2>Test Result</h2>
+            <h1 id="score-text" style="font-size:60px; color:var(--primary); margin:20px 0;">0/0</h1>
+            <h3>🏆 Rank List</h3>
             <table id="rank-table">
-                <thead><tr><th>Rank</th><th>Candidate</th><th>Score</th></tr></thead>
+                <thead><tr><th>Rank</th><th>Name</th><th>Score</th></tr></thead>
                 <tbody id="rank-data"></tbody>
             </table>
-            <div style="display:flex; gap:10px; justify-content:center;">
-                <button class="btn" onclick="reviewTest()" style="background:orange">Review Answers</button>
-                <button class="btn" onclick="location.reload()">Back to Home</button>
-            </div>
+            <button class="btn" onclick="location.reload()">Wapas Dashboard par Jayein</button>
         </div>
     </div>
 
     <script>
-        // Database Structure
         const database = {
             railway: {
-                ntpc: { name: "RRB NTPC", tests: 100 },
-                alp: { name: "RRB ALP/Tech", tests: 100 },
-                je: { name: "RRB JE", tests: 100 },
-                groupd: { name: "Group D", tests: 100 }
+                ntpc: { name: "RRB NTPC", total: 100 },
+                alp: { name: "RRB ALP", total: 100 },
+                je: { name: "RRB JE", total: 100 }
             },
             ssc: {
-                cgl: { name: "SSC CGL", tests: 50 },
-                gd: { name: "SSC GD", tests: 100 },
-                mts: { name: "SSC MTS", tests: 50 }
+                cgl: { name: "SSC CGL", total: 100 },
+                gd: { name: "SSC GD", total: 100 }
             }
         };
 
-        // Sample Questions (Asali data yahan bharein)
-        const questionsDB = [
-            { q: "Power ki SI Unit kya hai?", o: ["Watt", "Volt", "Newton", "Ohm"], a: 0, f: "Power is measured in Watts." },
-            { q: "Capital of India?", o: ["Mumbai", "Delhi", "Kolkata", "Chennai"], a: 1, f: "New Delhi is the capital." },
-            { q: "√625 ka maan?", o: ["15", "25", "35", "45"], a: 1, f: "25 x 25 = 625" }
+        // Demo Questions
+        const questions = [
+            { q: "Bharat ki Rajdhani?", o: ["Mumbai", "Delhi", "Patna", "Pune"], a: 1 },
+            { q: "Railway Minister kaun hai?", o: ["Ashwini Vaishnaw", "Amit Shah", "Modi", "Raj Nath"], a: 0 },
+            { q: "2 + 2 * 2?", o: ["8", "6", "4", "2"], a: 1 }
         ];
 
-        let user = "", currentCat = "", currentExam = "", currentTestNo = 0;
-        let qIdx = 0, answers = [], time = 3600, timer, isReview = false;
+        let userName = "", currentCat = "", currentExam = "";
+        let qIdx = 0, userAns = [], time = 3600, timer;
 
         function register() {
-            user = document.getElementById('user-name').value;
-            if(!user) return alert("Please enter name");
+            userName = document.getElementById('user-name').value;
+            if(!userName) return alert("Naam bharein!");
             document.getElementById('scr-reg').style.display='none';
             document.getElementById('scr-main').style.display='flex';
         }
 
-        function showExams(cat) {
+        function openSub(cat) {
             currentCat = cat;
             let h = "";
             for(let key in database[cat]) {
-                h += `<div class="card" onclick="showTestNumbers('${key}')"><h3>${database[cat][key].name}</h3><p>${database[cat][key].tests} Tests Available</p></div>`;
+                h += `<div class="card" onclick="listTests('${key}')"><h3>${database[cat][key].name}</h3><p>100 Tests Available</p></div>`;
             }
             document.getElementById('exam-list').innerHTML = h;
             document.getElementById('scr-main').style.display='none';
             document.getElementById('scr-sub').style.display='flex';
         }
 
-        function showTestNumbers(exam) {
-            currentExam = exam;
-            let total = database[currentCat][exam].tests;
+        function listTests(examKey) {
+            currentExam = examKey;
+            let total = database[currentCat][examKey].total;
             let h = "";
             for(let i=1; i<=total; i++) {
-                h += `<div class="test-item" onclick="startTest(${i})">Test ${i}</div>`;
+                h += `<div class="test-btn" onclick="startTest(${i})">Test ${i}</div>`;
             }
-            document.getElementById('test-numbers').innerHTML = h;
+            document.getElementById('test-buttons-container').innerHTML = h;
+            document.getElementById('test-list-h').innerText = database[currentCat][examKey].name + " Series";
             document.getElementById('scr-sub').style.display='none';
-            document.getElementById('scr-tests').style.display='flex';
+            document.getElementById('scr-test-list').style.display='flex';
         }
 
         function startTest(num) {
-            currentTestNo = num;
-            isReview = false;
-            answers = new Array(questionsDB.length).fill(null);
-            document.getElementById('scr-tests').style.display='none';
+            userAns = new Array(questions.length).fill(null);
+            qIdx = 0;
+            document.getElementById('scr-test-list').style.display='none';
             document.getElementById('quiz-head').style.display='flex';
             document.getElementById('quiz-body').style.display='flex';
-            document.getElementById('current-test-name').innerText = `${database[currentCat][currentExam].name} - Test ${num}`;
-            qIdx = 0;
+            document.getElementById('display-test-name').innerText = database[currentCat][currentExam].name + " - Mock Test " + num;
+            
             loadQ();
             timer = setInterval(tick, 1000);
         }
 
         function loadQ() {
-            let q = questionsDB[qIdx];
-            document.getElementById('q-number').innerText = `Question ${qIdx + 1}`;
-            document.getElementById('q-text').innerText = q.q;
+            let q = questions[qIdx];
+            document.getElementById('q-idx').innerText = "Question " + (qIdx + 1);
+            document.getElementById('q-txt').innerText = q.q;
             let h = "";
             q.o.forEach((opt, i) => {
-                let cls = "option";
-                if(isReview) {
-                    if(i === q.a) cls += " correct";
-                    if(answers[qIdx] === i && i !== q.a) cls += " wrong";
-                }
-                let check = (answers[qIdx] === i) ? "checked" : "";
-                h += `<label class="${cls}"><input type="radio" name="opt" onclick="saveAns(${i})" ${check} ${isReview?'disabled':''}> ${opt}</label>`;
+                let check = (userAns[qIdx] === i) ? "checked" : "";
+                h += `<label class="option"><input type="radio" name="o" onclick="save(${i})" ${check}> ${opt}</label>`;
             });
-            document.getElementById('options-box').innerHTML = h;
-            
-            // Fact for review
-            const factBox = document.getElementById('review-fact');
-            if(isReview) {
-                factBox.style.display = "block";
-                factBox.innerHTML = `<strong>Explanation:</strong> ${q.f}`;
-            } else { factBox.style.display = "none"; }
-            updatePalette();
+            document.getElementById('options').innerHTML = h;
+            pal();
         }
 
-        function saveAns(i) { if(!isReview) { answers[qIdx] = i; updatePalette(); } }
+        function save(i) { userAns[qIdx] = i; pal(); }
 
-        function updatePalette() {
+        function pal() {
             let h = "";
-            for(let i=0; i<questionsDB.length; i++) {
-                let cl = (i===qIdx)?"dot active":(answers[i]!==null?"dot done":"dot");
+            for(let i=0; i<questions.length; i++) {
+                let cl = (i===qIdx)?"dot active":(userAns[i]!==null?"dot done":"dot");
                 h += `<div class="${cl}" onclick="qIdx=${i};loadQ()">${i+1}</div>`;
             }
             document.getElementById('palette').innerHTML = h;
         }
 
-        function nextQ() { if(qIdx < questionsDB.length-1) { qIdx++; loadQ(); } }
-        function prevQ() { if(qIdx > 0) { qIdx--; loadQ(); } }
+        function next() { if(qIdx < questions.length-1) { qIdx++; loadQ(); } }
+        function prev() { if(qIdx > 0) { qIdx--; loadQ(); } }
 
         function tick() {
             time--;
             let m=Math.floor(time/60), s=time%60;
             document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
-            if(time<=0) submitTest();
+            if(time<=0) finishTest();
         }
 
-        function submitTest() {
+        function finishTest() {
             clearInterval(timer);
             let score = 0;
-            questionsDB.forEach((q, i) => { if(answers[i] === q.a) score++; });
-            
-            // Local Ranking Logic
-            let lKey = `rank_${currentExam}_${currentTestNo}`;
-            let hist = JSON.parse(localStorage.getItem(lKey) || "[]");
-            hist.push({n: user, s: score});
-            hist.sort((a,b) => b.s - a.s);
-            localStorage.setItem(lKey, JSON.stringify(hist));
+            questions.forEach((q, i) => { if(userAns[i] === q.a) score++; });
+
+            // Ranking (Save in LocalStorage)
+            let key = "rank_" + currentExam;
+            let history = JSON.parse(localStorage.getItem(key) || "[]");
+            history.push({n: userName, s: score});
+            history.sort((a,b) => b.s - a.s);
+            localStorage.setItem(key, JSON.stringify(history));
 
             document.getElementById('quiz-head').style.display='none';
             document.getElementById('quiz-body').style.display='none';
             document.getElementById('scr-res').style.display='flex';
-            document.getElementById('final-score').innerText = `${score} / ${questionsDB.length}`;
-            
+            document.getElementById('score-text').innerText = `${score} / ${questions.length}`;
+
             let h = "";
-            hist.slice(0,10).forEach((e, i) => {
-                let me = (e.n === user && e.s === score) ? "class='my-rank'" : "";
+            history.slice(0, 10).forEach((e, i) => {
+                let me = (e.n === userName && e.s === score) ? "class='my-rank'" : "";
                 h += `<tr ${me}><td>${i+1}</td><td>${e.n}</td><td>${e.s}</td></tr>`;
             });
             document.getElementById('rank-data').innerHTML = h;
         }
 
-        function reviewTest() {
-            isReview = true;
-            document.getElementById('scr-res').style.display='none';
-            document.getElementById('quiz-head').style.display='flex';
-            document.getElementById('quiz-body').style.display='flex';
-            qIdx = 0;
-            loadQ();
-        }
-
         function backToMain() { document.getElementById('scr-sub').style.display='none'; document.getElementById('scr-main').style.display='flex'; }
-        function backToExams() { document.getElementById('scr-tests').style.display='none'; document.getElementById('scr-sub').style.display='flex'; }
+        function backToExams() { document.getElementById('scr-test-list').style.display='none'; document.getElementById('scr-sub').style.display='flex'; }
     </script>
 </body>
 </html>
