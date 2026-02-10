@@ -3,76 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Exam Pro Portal</title>
+    <title>Exam Hub | Pro Resume System</title>
     <style>
         :root { --blue: #1a73e8; --green: #28a745; --red: #d93025; --gray: #5f6368; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body { background: #f1f3f4; color: #202124; }
 
-        /* Screen Controller */
         .screen { display: none; min-height: 100vh; padding: 20px; flex-direction: column; align-items: center; justify-content: center; }
         .active { display: flex; }
-
-        /* Containers */
         .box { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; }
-        .wide-box { max-width: 900px; }
+        .wide-box { max-width: 1000px; }
 
-        /* Buttons & UI */
-        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #dadce0; border-radius: 6px; font-size: 16px; }
-        .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; margin: 5px; font-size: 15px; }
-        .btn-blue { background: var(--blue); color: white; }
-        .btn-gray { background: #e8eaed; color: #3c4043; }
-        .btn-green { background: var(--green); color: white; }
+        /* Navigation Header */
+        #quiz-header { background: white; border-bottom: 2px solid #ddd; padding: 10px 20px; width: 100%; display: none; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
 
-        /* Grid for Tests & Exams */
+        /* Grid Layouts */
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; width: 100%; margin-top: 20px; }
-        .card { background: white; padding: 20px; border: 1px solid #dadce0; border-radius: 8px; cursor: pointer; text-align: center; }
-        .card:hover { border-color: var(--blue); background: #f8fbff; }
+        .card { background: white; padding: 25px; border: 1px solid #dadce0; border-radius: 10px; cursor: pointer; text-align: center; transition: 0.3s; }
+        .card:hover { border-color: var(--blue); transform: translateY(-3px); }
 
-        .test-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 10px; width: 100%; max-height: 400px; overflow-y: auto; padding: 10px; border: 1px solid #eee; }
-        .test-item { padding: 12px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer; font-weight: bold; }
-
-        /* Quiz Header */
-        #quiz-header { background: white; border-bottom: 1px solid #ddd; padding: 15px; width: 100%; display: none; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; width: 100%; max-height: 400px; overflow-y: auto; padding: 10px; }
+        .test-item { padding: 15px 5px; border: 1px solid #ddd; border-radius: 6px; cursor: pointer; font-weight: bold; text-align: center; background: white; }
+        .test-item.resumable { background: #fff3cd; border-color: #ffc107; }
 
         /* Options */
-        .opt-label { display: block; padding: 15px; border: 1px solid #dadce0; margin: 10px 0; border-radius: 8px; cursor: pointer; text-align: left; }
-        .opt-label:hover { background: #f1f3f4; }
+        .opt-label { display: block; padding: 18px; border: 1px solid #dadce0; margin: 12px 0; border-radius: 8px; cursor: pointer; text-align: left; font-size: 16px; }
+        .opt-label:hover { background: #f8fbff; border-color: var(--blue); }
         .correct { background: #d4edda !important; border-color: var(--green); }
         .wrong { background: #f8d7da !important; border-color: var(--red); }
 
-        /* Palette */
-        .palette { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 15px; }
-        .dot { width: 30px; height: 30px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 12px; cursor: pointer; }
+        .btn { padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; }
+        .btn-blue { background: var(--blue); color: white; }
+        .btn-red { background: var(--red); color: white; }
+        .btn-gray { background: #e8eaed; color: #3c4043; }
+
+        .palette { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
+        .dot { width: 35px; height: 35px; border: 1px solid #ccc; display: flex; align-items: center; justify-content: center; border-radius: 5px; cursor: pointer; font-size: 12px; }
         .dot.answered { background: var(--green); color: white; border: none; }
-        .dot.current { border: 2px solid var(--blue); color: var(--blue); }
+        .dot.current { border: 2px solid var(--blue); color: var(--blue); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div id="quiz-header">
-        <div id="test-title" style="font-weight: bold;">Mock Test</div>
-        <div id="timer" style="color: var(--red); font-size: 18px; font-weight: bold;">60:00</div>
-        <button class="btn btn-green" onclick="submitTest()">Finish</button>
+        <button class="btn btn-gray" onclick="exitToDashboard()">← Exit & Save</button>
+        <div id="test-info" style="font-weight: bold; font-size: 18px;">Test</div>
+        <div id="timer" style="color: var(--red); font-size: 20px; font-weight: bold;">60:00</div>
+        <button class="btn btn-blue" onclick="confirmSubmit()">Finish</button>
     </div>
 
     <div id="scr-reg" class="screen">
         <div class="box">
-            <h2 style="margin-bottom:10px;">Create Account</h2>
-            <p style="color:var(--gray); font-size:14px;">One-time registration</p>
+            <h2>Portal Login</h2>
             <input type="text" id="name" placeholder="Full Name">
-            <input type="email" id="email" placeholder="Email Address">
-            <button class="btn btn-blue" style="width:100%" onclick="handleReg()">Get OTP</button>
-        </div>
-    </div>
-
-    <div id="scr-otp" class="screen">
-        <div class="box">
-            <h2>Enter OTP</h2>
-            <p>Use code <b>1234</b></p>
-            <input type="text" id="otp-code" placeholder="4 Digit Code">
-            <button class="btn btn-blue" style="width:100%" onclick="handleOTP()">Verify</button>
-            <button class="btn btn-gray" style="width:100%" onclick="nav('scr-reg')">Back</button>
+            <button class="btn btn-blue" style="width:100%; margin-top:15px;" onclick="register()">Enter Portal</button>
         </div>
     </div>
 
@@ -83,13 +67,13 @@
                 <div class="card" onclick="openExams('railway')"><h3>🚂 Railway</h3><p>NTPC, ALP, JE</p></div>
                 <div class="card" onclick="openExams('ssc')"><h3>🏛️ SSC</h3><p>CGL, GD, MTS</p></div>
             </div>
-            <button class="btn btn-gray" style="margin-top:20px;" onclick="logout()">Logout</button>
+            <button class="btn btn-gray" style="margin-top:30px;" onclick="logout()">Logout</button>
         </div>
     </div>
 
     <div id="scr-exams" class="screen">
         <div class="box wide-box">
-            <h2 id="cat-label">Exams</h2>
+            <h2 id="cat-title">Exams</h2>
             <div class="grid" id="exam-items"></div>
             <button class="btn btn-gray" style="margin-top:20px;" onclick="nav('scr-dash')">← Back</button>
         </div>
@@ -97,7 +81,8 @@
 
     <div id="scr-tests" class="screen">
         <div class="box wide-box">
-            <h2 id="exam-label">Test Series</h2>
+            <h2>Select Mock Test</h2>
+            <p style="margin-bottom:10px; color:var(--gray);">Yellow tests are in progress (Resumable)</p>
             <div class="test-grid" id="test-numbers"></div>
             <button class="btn btn-gray" style="margin-top:20px;" onclick="nav('scr-exams')">← Back</button>
         </div>
@@ -105,28 +90,28 @@
 
     <div id="scr-quiz" class="screen" style="justify-content: flex-start; padding-top: 20px;">
         <div style="display: flex; gap: 20px; width: 100%; max-width: 1100px; flex-wrap: wrap;">
-            <div id="question-area" style="flex: 2; background: white; padding: 25px; border-radius: 12px; min-height: 400px;">
+            <div style="flex: 2; background: white; padding: 30px; border-radius: 12px; min-height: 450px;">
                 <h3 id="q-num">Question 1</h3>
-                <p id="q-text" style="margin: 20px 0; font-size: 18px;"></p>
+                <p id="q-text" style="margin: 25px 0; font-size: 20px; line-height: 1.5;"></p>
                 <div id="options-box"></div>
-                <div id="fact-box" style="display:none; padding:15px; background:#e8f0fe; margin-top:15px; border-radius:8px;"></div>
-                <div style="margin-top:30px; border-top:1px solid #eee; padding-top:20px;">
+                <div style="margin-top:40px; border-top:1px solid #eee; padding-top:20px; display:flex; justify-content:space-between;">
                     <button class="btn btn-gray" onclick="changeQ(-1)">Previous</button>
                     <button class="btn btn-blue" onclick="changeQ(1)">Save & Next</button>
                 </div>
             </div>
             <div style="flex: 0.8; background: white; padding: 20px; border-radius: 12px; height: fit-content;">
-                <h4>Question Palette</h4>
+                <h4 style="margin-bottom:15px;">Question Palette</h4>
                 <div class="palette" id="palette"></div>
+                <div id="review-fact" style="display:none; margin-top:20px; padding:10px; background:#e8f0fe; border-radius:5px; font-size:14px;"></div>
             </div>
         </div>
     </div>
 
     <div id="scr-res" class="screen">
         <div class="box">
-            <h2>Result Analysis</h2>
-            <h1 id="score-val" style="font-size: 50px; color: var(--blue); margin: 15px 0;">0</h1>
-            <div id="stats" style="font-weight:bold; margin-bottom:20px;"></div>
+            <h2>Test Summary</h2>
+            <h1 id="score-val" style="font-size: 55px; color: var(--blue); margin: 20px 0;">0</h1>
+            <div id="stats" style="margin-bottom:25px; font-size:18px;"></div>
             <button class="btn btn-blue" onclick="startReview()">Review Answers</button>
             <button class="btn btn-gray" onclick="location.reload()">Dashboard</button>
         </div>
@@ -134,20 +119,20 @@
 
     <script>
         const portalDB = {
-            railway: { title: "Railway", items: ["NTPC", "ALP", "RRB JE", "Group D"] },
-            ssc: { title: "SSC", items: ["SSC CGL", "SSC GD", "MTS", "CHSL"] }
+            railway: { items: ["NTPC", "ALP", "RRB JE"] },
+            ssc: { items: ["CGL", "SSC GD", "MTS"] }
         };
 
-        const questionBank = [
-            { q: "What is the capital of India?", o: ["Mumbai", "Delhi", "Pune", "Jaipur"], a: 1, f: "New Delhi is the capital since 1911." },
-            { q: "Current Railway Minister?", o: ["Piyush Goyal", "Ashwini Vaishnaw", "Modi", "Amit Shah"], a: 1, f: "Ashwini Vaishnaw took charge in 2021." },
-            { q: "S.I. unit of Force?", o: ["Joule", "Newton", "Watt", "Pascal"], a: 1, f: "Newton (N) is the unit of Force." }
+        const questions = [
+            { q: "Bharat ki Rajdhani kya hai?", o: ["Mumbai", "Delhi", "Kolkata", "Chennai"], a: 1, f: "Delhi became capital in 1911." },
+            { q: "Railway Minister kaun hain?", o: ["Piyush Goyal", "Ashwini Vaishnaw", "Amit Shah"], a: 1, f: "Ashwini Vaishnaw is the current minister." },
+            { q: "Force ki SI unit?", o: ["Watt", "Newton", "Pascal", "Joule"], a: 1, f: "Newton is the SI unit of Force." }
         ];
 
         let state = {
-            user: JSON.parse(localStorage.getItem('user_data')),
-            currentCat: '',
+            user: JSON.parse(localStorage.getItem('user')),
             currentExam: '',
+            testId: '',
             qIdx: 0,
             answers: [],
             timeLeft: 3600,
@@ -155,41 +140,31 @@
             isReview: false
         };
 
-        // Screen Navigator
         function nav(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById('quiz-header').style.display = (id === 'scr-quiz') ? 'flex' : 'none';
             document.getElementById(id).classList.add('active');
+            document.getElementById('quiz-header').style.display = (id === 'scr-quiz') ? 'flex' : 'none';
         }
 
         window.onload = () => { if(state.user) showDash(); else nav('scr-reg'); };
 
-        function handleReg() {
+        function register() {
             let n = document.getElementById('name').value;
-            if(!n) return alert("Enter Name");
-            state.tempName = n;
-            nav('scr-otp');
-        }
-
-        function handleOTP() {
-            if(document.getElementById('otp-code').value === "1234") {
-                state.user = { name: state.tempName };
-                localStorage.setItem('user_data', JSON.stringify(state.user));
-                showDash();
-            } else alert("Wrong OTP (Use 1234)");
+            if(!n) return alert("Please enter name");
+            state.user = { name: n };
+            localStorage.setItem('user', JSON.stringify(state.user));
+            showDash();
         }
 
         function showDash() {
-            document.getElementById('welcome-msg').innerText = "Hello, " + state.user.name;
+            document.getElementById('welcome-msg').innerText = "Namaste, " + state.user.name;
             nav('scr-dash');
         }
 
         function openExams(cat) {
-            state.currentCat = cat;
-            document.getElementById('cat-label').innerText = portalDB[cat].title + " Exams";
             let h = "";
             portalDB[cat].items.forEach(ex => {
-                h += `<div class="card" onclick="openTestList('${ex}')"><h3>${ex}</h3><p>100 Full Tests</p></div>`;
+                h += `<div class="card" onclick="openTestList('${ex}')"><h3>${ex}</h3><p>100 Tests</p></div>`;
             });
             document.getElementById('exam-items').innerHTML = h;
             nav('scr-exams');
@@ -197,28 +172,45 @@
 
         function openTestList(ex) {
             state.currentExam = ex;
-            document.getElementById('exam-label').innerText = ex + " Series";
             let h = "";
             for(let i=1; i<=100; i++) {
-                h += `<div class="test-item" onclick="startQuiz(${i})">Test ${i}</div>`;
+                let id = `${ex}_test_${i}`;
+                let saved = localStorage.getItem(id);
+                let cls = saved ? "test-item resumable" : "test-item";
+                h += `<div class="${cls}" onclick="loadTest('${id}', ${i})">Test ${i}</div>`;
             }
             document.getElementById('test-numbers').innerHTML = h;
             nav('scr-tests');
         }
 
-        function startQuiz(num) {
-            state.answers = new Array(questionBank.length).fill(null);
-            state.qIdx = 0;
-            state.timeLeft = 3600;
+        function loadTest(id, num) {
+            state.testId = id;
+            let saved = JSON.parse(localStorage.getItem(id));
+            
+            if(saved) {
+                state.answers = saved.answers;
+                state.timeLeft = saved.timeLeft;
+                state.qIdx = saved.qIdx;
+            } else {
+                state.answers = new Array(questions.length).fill(null);
+                state.timeLeft = 3600;
+                state.qIdx = 0;
+            }
+            
             state.isReview = false;
-            document.getElementById('test-title').innerText = state.currentExam + " | Test " + num;
-            renderQ();
+            document.getElementById('test-info').innerText = `${state.currentExam} | Test ${num}`;
+            startQuiz();
+        }
+
+        function startQuiz() {
             nav('scr-quiz');
-            state.timer = setInterval(updateTimer, 1000);
+            renderQ();
+            if(state.timer) clearInterval(state.timer);
+            state.timer = setInterval(tick, 1000);
         }
 
         function renderQ() {
-            let q = questionBank[state.qIdx];
+            let q = questions[state.qIdx];
             document.getElementById('q-num').innerText = "Question " + (state.qIdx + 1);
             document.getElementById('q-text').innerText = q.q;
             
@@ -227,58 +219,84 @@
                 let cls = "opt-label";
                 if(state.isReview) {
                     if(i === q.a) cls += " correct";
-                    if(state.answers[state.qIdx] === i && i !== q.a) cls += " wrong";
+                    if(state.answers[state.state_qIdx] === i && i !== q.a) cls += " wrong";
                 }
                 let chk = (state.answers[state.qIdx] === i) ? "checked" : "";
-                h += `<label class="${cls}"><input type="radio" name="qz" onclick="saveAns(${i})" ${chk} ${state.isReview?'disabled':''}> ${opt}</label>`;
+                h += `<label class="${cls}"><input type="radio" name="o" onclick="save(${i})" ${chk} ${state.isReview?'disabled':''}> ${opt}</label>`;
             });
             document.getElementById('options-box').innerHTML = h;
             
-            let fb = document.getElementById('fact-box');
-            if(state.isReview) { fb.style.display="block"; fb.innerHTML="<b>Fact:</b> " + q.f; }
-            else fb.style.display="none";
+            if(state.isReview) {
+                document.getElementById('review-fact').style.display = "block";
+                document.getElementById('review-fact').innerHTML = "<b>Fact:</b> " + q.f;
+            } else {
+                document.getElementById('review-fact').style.display = "none";
+            }
             
             renderPalette();
+            autoSave();
         }
 
-        function saveAns(i) { if(!state.isReview) { state.answers[state.qIdx] = i; renderPalette(); } }
+        function save(i) { if(!state.isReview) { state.answers[state.qIdx] = i; renderPalette(); autoSave(); } }
 
         function renderPalette() {
             let h = "";
-            for(let i=0; i<questionBank.length; i++) {
+            for(let i=0; i<questions.length; i++) {
                 let cls = (i === state.qIdx) ? "dot current" : (state.answers[i] !== null ? "dot answered" : "dot");
-                h += `<div class="${cls}" onclick="jumpTo(${i})">${i+1}</div>`;
+                h += `<div class="${cls}" onclick="jump(${i})">${i+1}</div>`;
             }
             document.getElementById('palette').innerHTML = h;
         }
 
-        function jumpTo(i) { state.qIdx = i; renderQ(); }
+        function jump(i) { state.qIdx = i; renderQ(); }
         function changeQ(dir) { 
             let next = state.qIdx + dir;
-            if(next >= 0 && next < questionBank.length) { state.qIdx = next; renderQ(); }
+            if(next >= 0 && next < questions.length) { state.qIdx = next; renderQ(); }
         }
 
-        function updateTimer() {
+        function tick() {
             state.timeLeft--;
             let m = Math.floor(state.timeLeft/60), s = state.timeLeft%60;
             document.getElementById('timer').innerText = `${m}:${s<10?'0'+s:s}`;
-            if(state.timeLeft <= 0) submitTest();
+            if(state.timeLeft % 5 === 0) autoSave(); // Every 5 sec autosave
+            if(state.timeLeft <= 0) confirmSubmit();
         }
 
-        function submitTest() {
+        function autoSave() {
+            if(!state.isReview) {
+                localStorage.setItem(state.testId, JSON.stringify({
+                    answers: state.answers,
+                    timeLeft: state.timeLeft,
+                    qIdx: state.qIdx
+                }));
+            }
+        }
+
+        function exitToDashboard() {
+            autoSave();
             clearInterval(state.timer);
-            let score = 0, cor = 0, wrg = 0;
-            questionBank.forEach((q, i) => {
-                if(state.answers[i] === q.a) { score += 1; cor++; }
-                else if(state.answers[i] !== null) { score -= 0.25; wrg++; }
-            });
-            nav('scr-res');
-            document.getElementById('score-val').innerText = score.toFixed(2);
-            document.getElementById('stats').innerText = `Correct: ${cor} | Wrong: ${wrg} | Negative: -${(wrg*0.25).toFixed(2)}`;
+            nav('scr-dash');
+        }
+
+        function confirmSubmit() {
+            if(confirm("Are you sure you want to submit?")) {
+                clearInterval(state.timer);
+                localStorage.removeItem(state.testId); // Remove resume data on final submit
+                
+                let score = 0, cor = 0, wrg = 0;
+                questions.forEach((q, i) => {
+                    if(state.answers[i] === q.a) { score++; cor++; }
+                    else if(state.answers[i] !== null) { score -= 0.25; wrg++; }
+                });
+
+                nav('scr-res');
+                document.getElementById('score-val').innerText = score.toFixed(2);
+                document.getElementById('stats').innerText = `Correct: ${cor} | Wrong: ${wrg} | Neg: -${(wrg*0.25).toFixed(2)}`;
+            }
         }
 
         function startReview() { state.isReview = true; state.qIdx = 0; nav('scr-quiz'); renderQ(); }
-        function logout() { localStorage.removeItem('user_data'); location.reload(); }
+        function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
